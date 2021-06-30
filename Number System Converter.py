@@ -1,7 +1,26 @@
 def number_system_converter(number, start_base, end_base):
+
+    to_hex_table = {2 : {1010 : 'A',
+                         1011 : 'B',
+                         1100 : 'C',
+                         1101 : 'D',
+                         1110 : 'E',
+                         1111 : 'F'},
+                    8 : {12 : 'A',
+                         13 : 'B',
+                         14 : 'C',
+                         15 : 'D',
+                         16 : 'E',
+                         17 : 'F'},
+                    10 : {10 : 'A',
+                          11 : 'B',
+                          12 : 'C',
+                          13 : 'D',
+                          14 : 'E',
+                          15 : 'F'}}
     
     # На всякий случай сохраню заданное число:
-    start_number = number;
+    start_number = number
     
     # Рассмотрим первый случай: s < h
     # Необходимо использовать арифметику СС-h.
@@ -27,7 +46,7 @@ def number_system_converter(number, start_base, end_base):
             # Выпишем отдельно дробную часть
             fraction_number = round((number - (number // 1)), ((len(str(number)) - str(number).find('.')) - 1))
             # Прибавляем числа по правилу:
-            for i in range((len(str(number)) - str(number).find('.')) - 1):
+            for i in range((len(str(number)) - str(number).find('.')) - 2):
                 intermediate_answer = (fraction_number * 10 // 1) * (start_base ** bit_number)
                 answer += intermediate_answer
                 fraction_number = fraction_number * 10 - fraction_number * 10 // 1
@@ -95,6 +114,8 @@ def number_system_converter(number, start_base, end_base):
 
             # Вернёмся к целой части 
             number //= 1
+            number = int(number)
+            answer = ''
             if number == 0: 
                 answer = '0.' + fraction_answer
                 return answer
@@ -115,18 +136,20 @@ def number_system_converter(number, start_base, end_base):
                               intermediate_answer = 'F'
                 answer = (str(intermediate_answer)) + answer
                 number //= end_base
-            answer = answer + '.' + fraction_answer
-            return answer
+           # answer = answer + '.' + fraction_answer
+            return answer + '.' + fraction_answer
 
 
-print(number_system_converter(0.453, 10, 2))
-print(number_system_converter(0.453, 10, 8))
-        
-print(number_system_converter(1101.01, 2, 10))
-print(number_system_converter(1101, 2, 10))
-print(number_system_converter(432, 8, 10))
+#print(number_system_converter(0.453, 10, 2))
+#print(number_system_converter(0.453, 10, 8))
+#        
+#print(number_system_converter(1101.01, 2, 10))
+#print(number_system_converter(1101, 2, 10))
+#print(number_system_converter(432, 8, 10))
+#
+#print(number_system_converter(75, 10, 2))
+#print(number_system_converter(75, 10, 8))
 
-print(number_system_converter(75, 10, 2))
-print(number_system_converter(75, 10, 8))
+print(number_system_converter(75.453, 10, 2))
 
 # Нужно добавить вариант с 16-иричной системой
