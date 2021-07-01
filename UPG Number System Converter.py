@@ -1,16 +1,22 @@
 def number_system_converter(number, start_base, end_base):
     # +2  -> +8, +10, +16;
-    # 8  -> 2, +10, 16;
+    # 8  -> +2, +10, 16;
     # +10 -> +2, +8,  +16;
-    # 16 -> 2, 8, 10;
+    # 16 -> +2, 8, +10;
 
 
     # Для перевода: 2 -> 10; 8 -> 10
     # Алгоритм: СОСТАВЛЕНИЕ И РЕШЕНИЕ ПОЛИНОМА
-    if (start_base in [2, 8] and end_base == 10):
+    if (start_base in [2, 8, 16] and end_base == 10):
+        hex_to_dec = {'A' : 10,
+                      'B' : 11,
+                      'C' : 12,
+                      'D' : 13,
+                      'E' : 14,
+                      'F' : 15}
 
         # Зададим переменную для будущего ответа
-        answer = 0
+        answer = 0.0
             
         # Если число целое
         if (str(number).find('.') == -1):
@@ -18,28 +24,46 @@ def number_system_converter(number, start_base, end_base):
             bit_number = 0
 
             # Перебираем все цифры в исходном числе
-            while (number != 0):
+            while (number != 0 and number != ''):
                 # Рассмотрим на двух примерах: (1101, 2, 10) и (432, 8, 10)
-                intermediate_answer = (number % 10) * (start_base ** bit_number)
-                    # 1.1) int_ans = (1101 % 10) * (2 ** 0) = 1 * 2**0 = 1 | # 2.1) int_ans = (432 % 10) * (8 ** 0) = 2 * 8**0 = 2
-                    # 1.2) int_ans = (110  % 10) * (2 ** 1) = 0 * 2**1 = 0 | # 2.2) int_ans = (43  % 10) * (8 ** 1) = 3 * 8**1 = 24
-                    # 1.3) int_ans = (11   % 10) * (2 ** 2) = 1 * 2**2 = 4 | # 2.3) int_ans = (4   % 10) * (8 ** 2) = 4 * 8**2 = 256
-                    # 1.4) int_ans = (1    % 10) * (2 ** 3) = 1 * 2**3 = 8
+                if start_base == 16 :
+                    intermediate_answer = number[-1]
+                    if intermediate_answer in hex_to_dec :
+                        intermediate_answer = hex_to_dec[intermediate_answer]
+                    else :
+                        intermediate_answer = int(intermediate_answer)
+                    intermediate_answer = intermediate_answer * (start_base ** bit_number) 
+                else :
+                    intermediate_answer = (number % 10) * (start_base ** bit_number)
+                        # 1.1) int_ans = (1101 % 10) * (2 ** 0) = 1 * 2**0 = 1
+                        # 1.2) int_ans = (110  % 10) * (2 ** 1) = 0 * 2**1 = 0
+                        # 1.3) int_ans = (11   % 10) * (2 ** 2) = 1 * 2**2 = 4
+                        # 1.4) int_ans = (1    % 10) * (2 ** 3) = 1 * 2**3 = 8
+                            # 2.1) int_ans = (432 % 10) * (8 ** 0) = 2 * 8**0 = 2
+                            # 2.2) int_ans = (43  % 10) * (8 ** 1) = 3 * 8**1 = 24
+                            # 2.3) int_ans = (4   % 10) * (8 ** 2) = 4 * 8**2 = 256
+                                # 3.1) int_ans = 'FDA1'[-1] * (16 ** 0) = 1  * 16**0 = 1
+                                # 3.2) int_ans = 'FDA'[-1]  * (16 ** 1) = 10 * 16**1 = 160
+                                # 3.3) int_ans = 'FD'[-1]   * (16 ** 2) = 13 * 16**2 = 3328
+                                # 3.4) int_ans = 'F'[-1]    * (16 ** 3) = 15 * 16**3 = 61440
                 answer += intermediate_answer
-                    # 1.1) ans = 0 + 1 = 1                                 | # 2.1) ans = 0  + 2 = 2
-                    # 1.2) ans = 1 + 0 = 1                                 | # 2.2) ans = 2  + 24 = 26
-                    # 1.3) ans = 1 + 4 = 5                                 | # 2.3) ans = 26 + 256 = 282
-                    # 1.4) ans = 5 + 8 = 13
-                number //= 10
-                    # 1.1) num = 1101 // 10 = 110                          | # 2.1) num = 432 // 10 = 43
-                    # 1.2) num = 110  // 10 = 11                           | # 2.2) num = 43  // 10 = 4
-                    # 1.3) num = 11   // 10 = 1                            | # 2.3) num = 4   // 10 = 0
-                    # 1.4) num = 1    // 10 = 0
+                    # 1.1) ans = 0 + 1 = 1     | # 2.1) ans = 0  + 2 = 2      | # 3.1) ans = 0 + 1 = 1
+                    # 1.2) ans = 1 + 0 = 1     | # 2.2) ans = 2  + 24 = 26    | # 3.2) ans = 160 + 1 = 161
+                    # 1.3) ans = 1 + 4 = 5     | # 2.3) ans = 26 + 256 = 282  | # 3.3) ans = 161 + 3328 = 3489
+                    # 1.4) ans = 5 + 8 = 13    |                              | # 3.4) ans = 3489 + 61440 = 64929
+                if start_base == 16 :
+                    number = number[:-1]
+                else :
+                    number //= 10
+                    # 1.1) num = 1101 // 10 = 110  | # 2.1) num = 432 // 10 = 43 | # 3.1) num = 'FDA1'[:-1] = 'FDA'
+                    # 1.2) num = 110  // 10 = 11   | # 2.2) num = 43  // 10 = 4  | # 3.2) num = 'FDA'[:-1]  = 'FD'
+                    # 1.3) num = 11   // 10 = 1    | # 2.3) num = 4   // 10 = 0  | # 3.3) num = 'FD'[:-1]   = 'F'
+                    # 1.4) num = 1    // 10 = 0    |                             | # 3.4) num = 'F'[:-1]    = ''
                 bit_number += 1
-                    # 1.1) bit_num = 0 + 1 = 1                             | # 2.1) bit_num = 0 + 1 = 1
-                    # 1.2) bit_num = 1 + 1 = 2                             | # 2.2) bit_num = 1 + 1 = 2
-                    # 1.3) bit_num = 2 + 1 = 3                             | # 2.1) bit_num = 2 + 1 = 3
-                    # 1.4) bit_num = 3 + 1 = 4
+                    # 1.1) bit_num = 0 + 1 = 1  | # 2.1) bit_num = 0 + 1 = 1 | # 3.1)  bit_num = 0 + 1 = 1
+                    # 1.2) bit_num = 1 + 1 = 2  | # 2.2) bit_num = 1 + 1 = 2 | # 3.2)  bit_num = 1 + 1 = 2
+                    # 1.3) bit_num = 2 + 1 = 3  | # 2.1) bit_num = 2 + 1 = 3 | # 3.3)  bit_num = 2 + 1 = 3
+                    # 1.4) bit_num = 3 + 1 = 4  |                            | # 3.4)  bit_num = 3 + 1 = 4
             return answer
         
         # Если число дробное
@@ -49,24 +73,37 @@ def number_system_converter(number, start_base, end_base):
             # Выпишем отдельно дробную часть
             # Округляем разницу между всем числом и его целой частью до количества знаков: длина числа - длина числа до точки, включительно
             # Если просто искать вышеупомянутую разницу, то могут возникать ошибки в следствие неидеальной арифметики чисел с плавающей точкой
-            fraction_number = round((number - (number // 1)), ((len(str(number)) - str(number).find('.')) - 1))
+            if start_base == 16 :
+                fraction_number = str(number)[str(number).find('.') + 1:]
+            else :
+                fraction_number = round((number - (number // 1)), ((len(str(number)) - str(number).find('.')) - 1))
                 
             # Прибавляем числа по правилу:
             # Перебираем числа, стоящие после точки. Аргумент range = их количеству (находили выше)
-            for i in range((len(str(number)) - str(number).find('.')) - 1):
+            for i in range(len(str(number)) - str(number).find('.') - (2 * start_base != 16)):
                 # Рассмотрим на двух примерах: (1101.01, 2, 10) и (432.2, 8, 10)
-                intermediate_answer = (fraction_number * 10 // 1) * (start_base ** bit_number)
-                    # 1.1) int_ans = (0.01 * 10 // 1) * (2 ** -1) = (0.1 // 1) * 1 / 2 = 0 * 0.5   = 0    
-                    # 1.2) int_ans = (0.1  * 10 // 1) * (2 ** -2) = (1   // 1) * 1 / 4 = 1 * 0.25  = 0.25
-                    # 2.1) int_ans = (0.2 * 10 // 1)  * (8 ** -1) = (2   // 1) * 1 / 8 = 2 * 0.125 = 0.25
+                if start_base == 16 :
+                    if fraction_number[0] in hex_to_dec :
+                        intermediate_answer = hex_to_dec[fraction_number[0]]
+                    else:
+                        intermediate_answer = int(fraction_number[0])
+                    intermediate_answer *= start_base ** bit_number                                                                          
+                else    :
+                    intermediate_answer = (fraction_number * 10 // 1) * (start_base ** bit_number)
+                        # 1.1) int_ans = (0.01 * 10 // 1) * (2 ** -1) = (0.1 // 1) * 1 / 2 = 0 * 0.5   = 0    
+                        # 1.2) int_ans = (0.1  * 10 // 1) * (2 ** -2) = (1   // 1) * 1 / 4 = 1 * 0.25  = 0.25
+                        # 2.1) int_ans = (0.2 * 10 // 1)  * (8 ** -1) = (2   // 1) * 1 / 8 = 2 * 0.125 = 0.25
                 answer += intermediate_answer
                     # 1.1) ans = 0 + 0    = 0    
                     # 1.2) ans = 0 + 0.25 = 0.25
                     # 2.1) ans = 0 + 0.25 = 0.25
-                fraction_number = fraction_number * 10 - fraction_number * 10 // 1
-                    # 1.1) frac_num = (0.01 * 10) - (0.01 * 10 // 1) = 0.1 - (0.1 // 1) = 0.1 - 0 = 0.1   
-                    # 1.2) frac_num = (0.1  * 10) - (0.1  * 10 // 1) = 1   - (1   // 1) = 1   - 1 = 0
-                    # 2.1) frac_num = (0.2  * 10) - (0.2  * 10 // 1) = 2   - (2   // 1) = 2   - 2 = 0
+                if start_base == 16:
+                    fraction_number = fraction_number[1::]
+                else : 
+                    fraction_number = fraction_number * 10 - fraction_number * 10 // 1
+                        # 1.1) frac_num = (0.01 * 10) - (0.01 * 10 // 1) = 0.1 - (0.1 // 1) = 0.1 - 0 = 0.1   
+                        # 1.2) frac_num = (0.1  * 10) - (0.1  * 10 // 1) = 1   - (1   // 1) = 1   - 1 = 0
+                        # 2.1) frac_num = (0.2  * 10) - (0.2  * 10 // 1) = 2   - (2   // 1) = 2   - 2 = 0
                 bit_number -= 1
                     # 1.1) bit_num = -1 - 1 = -2 
                     # 1.2) bit_num = -2 - 1 = -3
@@ -74,12 +111,26 @@ def number_system_converter(number, start_base, end_base):
             
             # Вернёмся к целой части
             # Делаем по полной аналогии с алгоритмом для целого числа
-            number //= 1
+            if start_base == 16 :
+                number = number[:str(number).find('.')]
+            else : 
+                number //= 1
             bit_number = 0
-            while (number != 0):
-                intermediate_answer = (number % 10) * (start_base ** bit_number)
+            while (number != 0 and number != ''):
+                if start_base == 16 :
+                    intermediate_answer = number[-1]
+                    if intermediate_answer in hex_to_dec :
+                        intermediate_answer = hex_to_dec[intermediate_answer]
+                    else :
+                        intermediate_answer = int(intermediate_answer)
+                    intermediate_answer = intermediate_answer * (start_base ** bit_number) 
+                else :
+                    intermediate_answer = (number % 10) * (start_base ** bit_number)
                 answer += intermediate_answer
-                number //= 10
+                if start_base == 16 :
+                    number = number[:-1]
+                else :
+                    number //= 10
                 bit_number += 1
             
             return answer
@@ -328,4 +379,50 @@ def number_system_converter(number, start_base, end_base):
                 integral_answer = (str(intermediate_answer)) + integral_answer
                 number //= end_base
             answer = integral_answer + '.' + fraction_answer
+            return answer
+
+    # Для перевода: 8 -> 2; 16 -> 2
+    # Алгоритм: ЗАМЕНА НА ДВОИЧНЫЙ ЭКВИВАЛЕНТ
+    elif (start_base in [8, 16] and end_base == 2):
+        checker = 0
+        if start_base == 8:
+            oct_to_bin = {'1' : '001',
+                          '2' : '010',
+                          '3' : '011',
+                          '4' : '100',
+                          '5' : '101',
+                          '6' : '110',
+                          '7' : '111'}
+            answer = ''
+            for i in str(number):
+                if checker == 0:
+                    answer += oct_to_bin[i][oct_to_bin[i].find('1')::]
+                    checker = 1
+                else:
+                    answer += oct_to_bin[i]
+            return answer
+        
+        elif start_base == 16:
+            hex_to_bin = {'1' : '0001',
+                          '2' : '0010',
+                          '3' : '0011',
+                          '4' : '0100',
+                          '5' : '0101',
+                          '6' : '0110',
+                          '7' : '0111',
+                          '8' : '1000',
+                          '9' : '1001',
+                          'A' : '1010',
+                          'B' : '1011',
+                          'C' : '1100',
+                          'D' : '1101',
+                          'E' : '1110',
+                          'F' : '1111'}
+            answer = ''
+            for i in str(number):
+                if checker == 0:
+                    answer += hex_to_bin[i][hex_to_bin[i].find('1')::]
+                    checker = 1
+                else:
+                    answer += hex_to_bin[i]
             return answer
