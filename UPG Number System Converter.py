@@ -22,6 +22,9 @@ def number_system_converter(number, start_base, end_base):
         if (str(number).find('.') == -1):
             # Степень start_base
             bit_number = 0
+            # Костыль:
+            if start_base == 16:
+                number = str(number)
 
             # Перебираем все цифры в исходном числе
             while (number != 0 and number != ''):
@@ -64,7 +67,7 @@ def number_system_converter(number, start_base, end_base):
                     # 1.2) bit_num = 1 + 1 = 2  | # 2.2) bit_num = 1 + 1 = 2 | # 3.2)  bit_num = 1 + 1 = 2
                     # 1.3) bit_num = 2 + 1 = 3  | # 2.1) bit_num = 2 + 1 = 3 | # 3.3)  bit_num = 2 + 1 = 3
                     # 1.4) bit_num = 3 + 1 = 4  |                            | # 3.4)  bit_num = 3 + 1 = 4
-            return answer
+            return int(answer)
         
         # Если число дробное
         else:
@@ -426,3 +429,11 @@ def number_system_converter(number, start_base, end_base):
                 else:
                     answer += hex_to_bin[i]
             return answer
+        
+    # Для перевода: 8 -> 16; 16 -> 6
+    # Алгоритм: ЧЕРЕЗ ПРОМЕЖУТОЧНЫЙ ПЕРЕВОД В ДВОИЧНУЮ СИСТЕМУ
+    elif (start_base in [8, 16] and end_base in [8, 16]):
+        number_bin = number_system_converter(number, start_base, 2)
+        answer = number_system_converter(number_bin, 2, end_base)
+        return answer
+        
