@@ -26,7 +26,7 @@ def number_system_converter(number, start_base, end_base):
     # Необходимо использовать арифметику СС-h.
     if (start_base < end_base):
         # Зададим переменную для будущего ответа:
-        answer = 0
+        answer = 0.0
         
         # Если number - целое число:
         if (str(number).find('.') == -1):
@@ -46,7 +46,7 @@ def number_system_converter(number, start_base, end_base):
             # Выпишем отдельно дробную часть
             fraction_number = round((number - (number // 1)), ((len(str(number)) - str(number).find('.')) - 1))
             # Прибавляем числа по правилу:
-            for i in range((len(str(number)) - str(number).find('.')) - 2):
+            for i in range((len(str(number)) - str(number).find('.')) - 1):
                 intermediate_answer = (fraction_number * 10 // 1) * (start_base ** bit_number)
                 answer += intermediate_answer
                 fraction_number = fraction_number * 10 - fraction_number * 10 // 1
@@ -59,6 +59,7 @@ def number_system_converter(number, start_base, end_base):
                 answer += intermediate_answer
                 number //= 10
                 bit_number += 1
+            
             return answer
 
     else:
@@ -151,5 +152,7 @@ def number_system_converter(number, start_base, end_base):
 #print(number_system_converter(75, 10, 8))
 
 print(number_system_converter(75.453, 10, 2))
+print(number_system_converter(75.453, 10, 8))
+print(number_system_converter(432.2, 8, 10))
 
 # Нужно добавить вариант с 16-иричной системой
